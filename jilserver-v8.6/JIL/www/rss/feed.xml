@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<rss version="2.0">
+
+<channel>
+
+	<title>JiL Server RSS feeds</title>
+	<link>http://localhost/</link>
+	<description>RSS feeds about JiL Server Status</description>	
+	<image>        
+		<url>http://localhost/labviewlogo.png</url>
+        <link>http://localhost/index.html</link>    
+	</image> 
+
+	<item>	
+		<title>User Connected from IP: 216.155.56.40</title>	
+		<link>http://localhost/rss/userconnected.html</link>	
+		<description>There is a user connected ... </description>	
+	</item>
+	
+	<item>	
+		<title>Para qué sirve el RSSl</title>	
+		<link>http://es.geocities.com/rss_guia_facil/para_que_sirve_rss.html</link>	
+		<description>Visita la Guía Fácil del RSS y conoce para qué sirve el formato RSS</description>	
+	</item>
+	
+	<item>	
+		<title>Cómo se usa el RSS</title>	
+		<link>http://es.geocities.com/rss_guia_facil/como_se_usa_rss.html</link>	
+		<description>Visita la Guía Fácil del RSS para saber cómo usar el formato RSS</description>	
+	</item>
+
+</channel>
+
+</rss> 

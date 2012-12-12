@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <device>
+    <deviceType>urn:schemas-upnp-org:device:JIL:1</deviceType>
+    <friendlyName>JIL server</friendlyName>
+    <manufacturer>UNED</manufacturer>
+    <manufacturerURL>http://www.dia.uned.es</manufacturerURL>
+    <modelDescription>Smart device for remote experimentation</modelDescription>
+    <modelName>JIL</modelName>
+    <modelNumber>1.0</modelNumber>
+    <modelURL>http://lab.dia.uned.es/personalweb</modelURL>
+    <serialNumber>1234567890</serialNumber>
+    <UDN>uuid:jilserverSmartDevice</UDN>
+    <UPC>123456789012</UPC>
+    <serviceList>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:power:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:power</serviceId>
+        <SCPDURL>/service/power/description.xml</SCPDURL>
+        <controlURL>/service/power/control</controlURL>
+        <eventSubURL>/service/power/eventSub</eventSubURL>
+      </service>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:status:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:status</serviceId>
+        <SCPDURL>>/service/status/description.xml</SCPDURL>
+        <controlURL>/service/status/control</controlURL>
+        <eventSubURL>/service/status/eventSub</eventSubURL>
+      </service>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:log:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:log</serviceId>
+        <SCPDURL>/service/log/description.xml</SCPDURL>
+        <controlURL>/service/log/control</controlURL>
+        <eventSubURL>/service/log/eventSub</eventSubURL>
+      </service>
+    </serviceList>
+    <presentationURL>http://lab.dia.uned.es/personalweb</presentationURL>
+  </device>
+</root>

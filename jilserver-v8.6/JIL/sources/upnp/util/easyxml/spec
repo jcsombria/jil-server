@@ -1,0 +1,98 @@
+[Package Name]
+Name=jki_lib_easyxml
+Version=1.0
+Release=2
+
+[Description]
+Description="Toolkit to easily flatten and unflatten LabVIEW data to and from XML."
+Summary="Easy XML"
+License="JKI License"
+Copyright="Copyright © 2007 James Kring, Inc. All rights reserved."
+Distribution=""
+Icon=../icon/icon.bmp
+Vendor=JKI
+URL=http://jkisoft.com/easyxml/
+Packager=JKI
+
+[Platform]
+Exclusive_LabVIEW_Version=>=7.1
+Exclusive_LabVIEW_System=ALL
+Exclusive_OS=ALL
+
+[Script VIs]
+Source Dir=""
+PreInstall=""
+PostInstall=""
+PreUninstall=""
+PostUninstall=""
+Verify=""
+PreBuild=""
+PostBuild=""
+
+[Dependencies]
+AutoReqProv=FALSE
+Requires=jki_rsc_toolkits_palette>=1.0,nirsc_html_help_common>=2.0,oglib_string>=2.6,oglib_lvdata>=2.8,oglib_error>=2.3,oglib_array>=2.7
+Conflicts=""
+
+[Files]
+Num File Groups=5
+
+[File Group 0]
+Source Dir=../mnu
+Target Dir="<vi.lib>/addons/_JKI Toolkits/dynamic_palette"
+Replace Mode=Always
+Num Files=1
+File 0=jki_lib_easyxml.mnu
+
+[File Group 1]
+Source Dir="../built/3rd source distribution"
+Target Dir="<vi.lib>/addons/_JKI Toolkits/EasyXML"
+Replace Mode=Always
+Num Files=1
+File 0=JKI_EasyXML.llb
+
+[File Group 2]
+Source Dir="../build documents"
+Target Dir="<vi.lib>/addons/_JKI Toolkits/EasyXML"
+Replace Mode=Always
+Num Files=0
+
+[File Group 3]
+Source Dir=../built/help
+Target Dir=<help>/JKI/EasyXML
+Replace Mode=Always
+Num Files=23
+File 0=cbool.png
+File 1=ccclst.png
+File 2=cfxdt.png
+File 3=ci32.png
+File 4=cpath.png
+File 5=cstr.png
+File 6=Easy_Generate_XML.htm
+File 7=Easy_Generate_XML.png
+File 8=Easy_Parse_XML.htm
+File 9=Easy_Parse_XML.png
+File 10=Easy_Read_XML_File.htm
+File 11=Easy_Read_XML_File.png
+File 12=Easy_Write_XML_File.htm
+File 13=Easy_Write_XML_File.png
+File 14=ibool.png
+File 15=icclst.png
+File 16=ifxdt.png
+File 17=ii32.png
+File 18=ipath.png
+File 19=istr.png
+File 20=JKI_EasyXML.htm
+File 21=JKI_EasyXML_Palette.png
+File 22=license.txt
+
+[File Group 4]
+Source Dir=../Examples
+Target Dir=<application>/examples/JKI/EasyXML
+Replace Mode=Always
+Num Files=4
+File 0="Generate Playlist XML String.vi"
+File 1="Read RSS Feed.vi"
+File 2="Write and Read XML File.vi"
+File 3="Write Google Earth KLM File.vi"
+
