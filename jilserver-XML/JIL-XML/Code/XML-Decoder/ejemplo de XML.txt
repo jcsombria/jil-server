@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF8"?>
+<methodCall>
+ <methodName>jil.runvi</methodName>
+ <params>
+   <param>
+     <value><i4>41</i4></value>
+   </param>
+   <param>
+     <value><int>-17</int></value>
+   </param>
+   <param>
+     <value><boolean>1</boolean></value>
+   </param>
+   <param>
+     <value><string>Hola</string></value>
+   </param>
+   <param>
+     <value>esto es un string "a pelo"</value>
+   </param>
+   <param>
+     <value><double>-187.217</double></value>
+   </param>
+   <param>
+     <value><dateTime.iso8601>19980717T14:08:55</dateTime.iso8601></value>
+   </param>
+   <param>
+     <value><base64>eW91IGNhbid0IHJlYWQgdGhpcyE=</base64></value>
+   </param>
+
+   <param>
+     <value>
+     <struct>
+       <member>
+            <name>lowerBound</name>
+           <value><i4>18</i4></value>
+       </member>
+        <member>
+           <name>upperBound</name>
+           <value><i4>139</i4></value>
+         </member>
+       </struct>
+      </value>
+   </param>
+
+   <param>
+     <value>
+     <array>
+        <data>
+           <value><i4>12</i4></value>
+           <value><string>Egypt</string></value>
+           <value><boolean>0</boolean></value>
+           <value><i4>-31</i4></value>
+        </data>
+       </array>
+      </value>
+    </param>
+
+ </params>
+</methodCall>
+
