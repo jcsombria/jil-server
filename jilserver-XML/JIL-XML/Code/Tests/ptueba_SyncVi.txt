@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>jil.syncvi</methodName>
+<params>
+  <param>
+    <value>
+    <array>
+
+      <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value><string>intin</string></value>
+        </member>
+        <member>
+          <name>action</name>
+          <value><string>set</string></value>
+        </member>
+        <member>
+          <name>value</name>
+          <value><int>%int%</int></value>
+        </member>
+      </struct>
+      </value>
+
+
+      <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value><string>doublein</string></value>
+        </member>
+        <member>
+          <name>action</name>
+          <value><string>set</string></value>
+        </member>
+        <member>
+          <name>value</name>
+          <value><double>%double%</double></value>
+        </member>
+      </struct>
+      </value>
+
+      <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value><string>booleanin</string></value>
+        </member>
+        <member>
+          <name>action</name>
+          <value><string>set</string></value>
+        </member>
+        <member>
+          <name>value</name>
+          <value><boolean>%bolean%</boolean></value>
+        </member>
+      </struct>
+      </value>
+
+      <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value><string>stringin</string></value>
+        </member>
+        <member>
+          <name>action</name>
+          <value><string>set</string></value>
+        </member>
+        <member>
+          <name>value</name>
+          <value><string>%string%</string></value>
+        </member>
+      </struct>
+      </value>
+
+
+      <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value><string>intout</string></value>
+        </member>
+        <member>
+          <name>action</name>
+          <value><string>get</string></value>
+        </member>
+        <member>
+          <name>value</name>
+          <value><int>0</int></value>
+        </member>
+      </struct>
+      </value>
+
+
+      <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value><string>doubleout</string></value>
+        </member>
+        <member>
+          <name>action</name>
+          <value><string>get</string></value>
+        </member>
+        <member>
+          <name>value</name>
+          <value><double>0</double></value>
+        </member>
+      </struct>
+      </value>
+
+      <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value><string>booleanout</string></value>
+        </member>
+        <member>
+          <name>action</name>
+          <value><string>get</string></value>
+        </member>
+        <member>
+          <name>value</name>
+          <value><boolean>0</boolean></value>
+        </member>
+      </struct>
+      </value>
+
+      <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value><string>stringout</string></value>
+        </member>
+        <member>
+          <name>action</name>
+          <value><string>get</string></value>
+        </member>
+        <member>
+          <name>value</name>
+          <value><string>a</string></value>
+        </member>
+      </struct>
+      </value>
+
+
+    </array>
+    </value>
+  </param>
+</params>
+</methodCall>
