@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>JilServer</title>
+  <meta name="description" content="JiLServer client ussing JavaScript">
+  <meta name="author" content="Dictino Chaos, Jesús Chacón y Juan Carlos">
+</head>
+<body>
+	<script type="text/javascript" src="JiL.js"></script>
+	<script type="text/javascript" src="mimic.js"></script> 
+<script>
+//crea un objeto jil para poder usar sus métodos
+var jil=new Jil();
+
+/////////////////
+function connect()
+{
+var mihost=document.getElementById("IPserver").value;
+if (jil.connect(mihost)=="OK")
+	{//cuando todo va bien los métodos devuelven "OK", excepto jil.getVariable que devuelve el valor de la variable
+	//en ese caso (y en el resto) se puede conocer el estado de Jil mirando la propiedad jil.status
+	document.getElementById("IPserver").disabled="disabled";//una vez conectado no se puede cambiar
+	}
+document.getElementById("Messages").value=jil.messages; //muestro aquí los mensajes de jil	
+}	
+
+/////////////////
+function openVi()
+{
+var miVi=document.getElementById("ViName").value;
+jil.openVi(miVi);//llamo a open
+if(jil.status=="OK")//otra forma de combrobar que todo va bien
+	{
+	//crear los controles e indicadores en la página
+	//abro los formularios
+	var codeControl="<form>";
+	var codeIndicator="<form>";
+	for(n=0; n<jil.controlType.length; n++)//recorro los controles y creo su código
+		{// creo un control con el nombre adecuado que combina el nombre de la variable y del contenedor en un identificador del control para garantizar unicidad
+		var ID="JIL-controls"+jil.controlName[n];
+		codeControl+="<span style=\"color: green;\">"+jil.controlName[n]+"</span>("+jil.controlType[n]+"):<input type=\"text\" id="+ID+"><br>";
+		}
+	for(n=0; n<jil.indicatorType.length; n++)//idem con los indicadores
+		{
+		var ID="JIL-indicators"+jil.indicatorName[n];
+		codeIndicator+="<span style=\"color: blue;\">"+jil.controlName[n]+"</span>("+jil.controlType[n]+"):<input type=\"text\" id="+ID+" style=\"background-color:LightGray\" disabled><br>";
+		}
+	//cierro los formularios
+	codeControl+="</form>";
+	codeIndicator+="</form>";
+	//actualiza la página
+	document.getElementById("controls").innerHTML+=codeControl;
+	document.getElementById("indicators").innerHTML+=codeIndicator;
+	//bloqueo el nombre y muestro los mensajes de jil
+	document.getElementById("ViName").disabled="disabled";//una vez abierto no se puede cambiar
+	document.getElementById("Messages").value=jil.messages;
+	}
+document.getElementById("Messages").value=jil.messages; //muestro los mensajes
+}
+
+/////////////////
+function runVi()
+{
+jil.RunVi();
+document.getElementById("Messages").value=jil.messages; 
+}
+
+
+/////////////////
+function syncVi()
+{//esta función hace las siguientes operaciones
+//1) Lee los controles y los prepara para enviarlos
+//2) Llama a jil.syncVi
+//3) actualiza los indicadores
+	
+//1) recojo las variables a enviar
+for(n=0; n<jil.controlName.length; n++)//recorro los controles actualizo el valor en jil
+	{
+	var ID="JIL-controls"+jil.controlName[n];
+	var valor=document.getElementById(ID).value;
+	jil.setVariable(jil.controlName[n],valor);//actualiza su valor en JiL
+	}
+
+//2) hago la sincronización y si todo va bien muestro el resultado
+if (jil.syncVi()=="OK")
+	{
+//3) actualizo los indicadores
+	for(n=0; n<jil.indicatorName.length; n++)
+		{
+		var ID="JIL-indicators"+jil.indicatorName[n];
+		document.getElementById(ID).value=jil.getVariable(jil.indicatorName[n]);
+		}
+	}
+document.getElementById("Messages").value=jil.messages; //muestro los mensajes	
+}
+
+/////////////////////
+function stopVi()
+{
+jil.stopVi();
+document.getElementById("Messages").value=jil.messages; 
+}
+////////////////////
+function runVi()
+{
+jil.runVi();
+document.getElementById("Messages").value=jil.messages; 
+}
+
+//////////////////
+function closeVi()
+{
+jil.closeVi();
+document.getElementById("Messages").value=jil.messages; 
+document.getElementById("ViName").disabled=false;//una vez cerrado podría abrir otro
+//actualiza la página
+document.getElementById("controls").innerHTML="";
+document.getElementById("indicators").innerHTML="";
+}
+
+/////////////////////
+function disconnect()
+{
+jil.disconnect();
+document.getElementById("Messages").value=jil.messages; 
+document.getElementById("IPserver").disabled=false;//una vez desconectado puedo cambiarlo de nuevo
+//actualiza la página
+document.getElementById("controls").innerHTML="";
+document.getElementById("indicators").innerHTML="";
+
+}
+
+//código de la página principal
+
+</script>
+	
+	<form>
+		<span style="color: blue;"> Server: </span>
+		<input type="text" id="IPserver" rows="10" value="http://localhost:2055">
+		<span style="color: blue;"> Vi: </span>
+		<input type="text" id="ViName" rows="10" value="JiLTest.vi">
+	</form>
+
+<HR width=100% align="left">
+
+	<input type="button"  onclick="connect();" value="Connect"/>    
+	<input type="button"  onclick="openVi();" value="Open"/> 
+	<input type="button"  onclick="runVi();" value="Run"/>
+	<input type="button"  onclick="syncVi();" value="Sync"/>
+	<input type="button"  onclick="stopVi();" value="Stop"/>
+	<input type="button"  onclick="closeVi();" value="Close"/> 
+	<input type="button"  onclick="disconnect();" value="Disconnect"/> 
+	<br>
+	
+	<div id="controls"></div>
+	<div id="indicators"></div>
+	<br>
+	<br>
+	<form>
+		<textarea id="Messages" rows="10" cols="50" disabled="disabled" ></textarea>
+	</form>
+	
+	
+</body>
+</html>
