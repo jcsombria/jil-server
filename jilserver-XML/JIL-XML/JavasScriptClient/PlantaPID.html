@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Planta PID</title>
+  <meta name="description" content="JiLServer client ussing JavaScript">
+  <meta name="author" content="Dictino Chaos, Jesús Chacón y Juan Carlos">
+</head>
+<body>
+	<script type="text/javascript" src="JiL.js"></script>
+	<script type="text/javascript" src="mimic.js"></script> 
+<script>
+//crea un objeto jil para poder usar sus métodos
+var jil=new Jil();
+var sinc=0;//para el timer
+/////////////////
+function connect()
+{
+var mihost=document.getElementById("IPserver").value;
+var miVi=document.getElementById("ViName").value;//esto en este caso es fijo
+
+if (jil.connect(mihost)=="OK")//me conecta al host
+	{//cuando todo va bien los métodos devuelven "OK", excepto jil.getVariable que devuelve el valor de la variable
+	//en ese caso (y en el resto) se puede conocer el estado de Jil mirando la propiedad jil.status
+	document.getElementById("IPserver").disabled="disabled";//una vez conectado no se puede cambiar
+	jil.openVi(miVi);//llamo a open para abrir un vi
+	if (jil.runVi()=="OK")//llamo a run para ejecutarlo
+		{
+		sinc=window.setInterval(syncVi,1000);//activo la sinronización automática cada segundo
+		document.getElementById("conectar").disabled="disabled";//ya estoy conectado no hay que conectar de nuevo
+		
+		}
+	else
+		{
+		alert(jil.messages);//si hay fallo muestro los mensajes
+		disconnect();//cierro todo limpiamente
+		}
+	document.getElementById("Messages").value=jil.messages;//muestro aquí los mensajes de jil	
+	document.getElementById("desconectar").disabled=false;//lo que si puedo es desconectar
+	}
+}	
+
+//////////////
+function syncVi()
+{
+//1) recojo las variables a enviar, lo hago una por una
+jil.setVariable("kp",document.getElementById("Kp").value);//nombre en jil y valor (que extraigo con getRlemantById de la vista)
+jil.setVariable("ti (sec)",document.getElementById("Ti").value);
+jil.setVariable("td (sec)",document.getElementById("Td").value);
+jil.setVariable("Automatico_ON/Manual_OFF",document.getElementById("ManAuto").value);
+jil.setVariable("umanual",document.getElementById("Umanual").value);
+jil.setVariable("SetPoint",document.getElementById("SetPoint").value);
+
+//2) hago la sincronización y si todo va bien muestro el resultado
+if (jil.syncVi()=="OK")
+	{
+
+	//3) actualizo los indicadores (también una por una a mano)
+	document.getElementById("Nivel").value=jil.getVariable("Nivel"); //a get variable le digo el nombre en labview y me devuelve el valor para actualizar la vista
+	document.getElementById("U").value=jil.getVariable("U"); 
+	}
+document.getElementById("Messages").value=jil.messages;//muestro aquí los mensajes de jil	
+d
+}	
+		
+/////////////////////
+function disconnect()
+{
+window.clearInterval(sinc);//paro la sincronización
+jil.stopVi();
+jil.closeVi();
+jil.disconnect();
+document.getElementById("Messages").value=jil.messages; 
+document.getElementById("IPserver").disabled=false;//una vez desconectado puedo cambiarlo de nuevo
+if (jil.status=="OK")
+	{
+	//todo ok no hago nada
+	document.getElementById("conectar").disabled=false;//ahora ya puedo volver a conectar
+	document.getElementById("desconectar").disabled="disabled";//no debo desconectar dos veces
+	}
+else
+	{
+	alert(jil.messages);
+	//si no puedo desconcetar doy opcion de conectar "por si acaso"
+	document.getElementById("conectar").disabled=false;//ahora ya puedo volver a conectar
+	document.getElementById("desconectar").disabled=false;//no debo desconectar dos veces
+	}
+//limpio la página en cualquier caso
+document.getElementById("controls").innerHTML="";
+document.getElementById("indicators").innerHTML="";
+}
+//código de la página principal
+</script>
+
+
+
+
+<!-- zona de conexión -->	
+	<form>
+		<span style="color: blue;"> Server: </span>
+		<input type="text" id="IPserver" rows="10" value="http://localhost:2055">
+		<span style="color: blue;"> Vi: </span>
+		<input type="text" id="ViName" rows="10" value="PID/PID_planta.vi" disabled="disabled">
+	</form>
+
+<HR width=100% align="left">
+<!-- zona de acciones -->
+	<input type="button" id=conectar onclick="connect();" value="Connect"/>    
+	<input type="button" id=desconectar onclick="disconnect();" value="Disconnect" disabled="disabled"/> 
+	<br>
+<!-- zona de controles -->
+	<div id="controls"></div>
+		<form>
+			<span style="color: green;">Kp:</span> <input type="text" id="Kp" value=20>
+			<span style="color: green;">Ti:</span> <input type="text" id="Ti" value=0.8>
+			<span style="color: green;">Td:</span> <input type="text" id="Td" value=0>
+			<br>
+			
+			<input type="radio" name=selector id="ManAuto" value="true" checked>  <span style="color: green;">Automatic</span>
+			<br>
+			<input type="radio" name=selector id="ManAuto" value="false">  <span style="color: green;">Manual</span>
+			<span style="color: green;">Umanual:</span> <input type="text" id="Umanual" value=0>
+			<br>
+			<span style="color: green;">SetPoint:</span> <input type="text" id="SetPoint" value=0>
+						
+		</form>
+<!-- zona de indicadores -->	
+	
+	<div id="indicators"></div>
+		<form>
+			<span style="color: blue;">Nivel:</span> <input type="text" id="Nivel" disabled="disabled">
+			<span style="color: blue;">U:</span> <input type="text" id="U" disabled="disabled">
+		</form>
+	<br>
+	<br>
+<!-- zona de mensajes -->		
+
+<HR width=100% align="left">	
+	<form>
+		<textarea id="Messages" rows="10" cols="50" disabled="disabled" ></textarea>
+	</form>
+	
+	
+</body>
+</html>
+
+

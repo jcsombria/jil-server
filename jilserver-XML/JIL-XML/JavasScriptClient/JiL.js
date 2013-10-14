@@ -26,16 +26,19 @@ Las otras variables Jil usa para sincronizarse con el servidor son:
 miJIl.controlName;  --> array donde se guardan los nombres de los controles
 miJIl.controlType;  --> array donde se guardan los tipos de los controles
 miJIl.controlValue;  --> array donde guardan los valors de los controles
+miJil.controlModified; --> Array booleano que indica si se ha modificado el control (debe actualizarse o no)
 miJIl.indicatorName; --> array donde guardan los nombres de los indicadores
 miJIl.indicatorType;  --> array donde guardan los tipos de los indicadores
 miJIl.indicatorValue; --> array donde guardan los valores de los indicadores
 
-Aunque dichos elementos son directamente accesibles, en general es mucho más conveniente usar los métodos:
+Aunque dichos elementos son directamente accesibles, si se modifican de forma inadecuada la siconización no funcionará correctaemtne
+es mucho más conveniente usar los métodos:
 
 miJIl.getVariable(name); --> que devuelve el valor del INDICADOR cuyo nombre es "name"
 miJIL.setVariable(name,value) --> que asigna el valor "value" al CONTROL de nombre "name"
 
 Nótese que los cambios sólo serán visibles en el servidor después de haver hecho miJIl.syncVi()
+Nótese además que sólo se actualizarán los controles si controlModified está a true (cosa que ocurre por defecto al usar los métodos set pero no si se modifica manualemnte)
 
  */
 
@@ -50,6 +53,7 @@ this.messages="";
 this.controlName=[];//array donde guarda el nombre de los controles
 this.controlType=[];//array donde guarda el tipo
 this.controlValue=[];//valor de los controles
+this.controlModified=[]; //Array booleano que indica si se ha modificado el control (debe actualizarse o no)
 this.indicatorName=[];//nombres de los indicadores
 this.indicatorType=[];//tipo de los indicadores
 this.indicatorValue=[];//valor de los indicadores
@@ -134,6 +138,7 @@ try{
 				{
 				this.controlName.push(response[n].name);//los guardo en la lista para luego hacer sync
 				this.controlType.push(response[n].DataType);
+				this.controlModified.push(false);
 				}
 			else
 				{//lo mismo en la lista de indicadores
@@ -203,21 +208,29 @@ try{
 	var n=0;
 	var valor=0;
 	var error=false;
+	//alert("name="+this.controlName+"modified="+this.controlModified);
 	while(!error && n<this.controlType.length) //primero agrego los controles:
 		{// tomo uno por uno los controles, miro el tipo y hago las conversiones en su caso
-		valor=this.controlValue[n];
-		valor=this.checkType(this.controlType[n],valor);//comprueba y convierte si es posible
-		if (valor==null)
+		var temporal={}//tengo que crear el elemento antes de los componentes
+		if (this.controlModified[n]==true)//si no lo hemos modificado no hace falta hacer nada
 			{
-			error=true;
-			this.messageAdd("Wrong value of control "+this.controlName[n]+" ("+this.controlType[n]+"), received:\""+this.controlValue[n]+"\"");
-			}//un problema	
-		else
-			{//si todo va bien lo agrego
-			argumentos[n]={};//tengo que crear el elemento antes de los componentes
-			argumentos[n].name=this.controlName[n];
-			argumentos[n].action="set";
-			argumentos[n].value=valor;
+			valor=this.controlValue[n];
+			valor=this.checkType(this.controlType[n],valor);//comprueba y convierte si es posible
+			if (valor==null)
+				{
+				error=true;
+				this.messageAdd("Wrong value of control "+this.controlName[n]+" ("+this.controlType[n]+"), received:\""+this.controlValue[n]+"\"");
+				}//un problema	
+			else
+				{//si todo va bien lo agrego
+				temporal.name=this.controlName[n];
+				temporal.action="set";
+				temporal.value=valor;
+				argumentos.push(temporal);//añado el argumento
+				//alert("temporal="+temporal);
+				//alert(argumentos);
+				}
+			
 			}
 		n=n+1;	
 		}	//fin del while			
@@ -228,34 +241,35 @@ try{
 		{//alerto del error en los indicadores
 		this.status="SYNC FAIL";
 		return this.status;//ya no seguiría
-		
 		}
 	else
 		{
 		m=0;
 		while(m<this.indicatorType.length) //ahora agrego los indicadores
 			{
-			argumentos[n+m]={};//tengo que crear el elemento antes de los componentes
-			argumentos[n+m].name=this.indicatorName[m];
-			argumentos[n+m].action="get";
+			temporal={};//tengo que crear el elemento antes de los componentes
+			temporal.name=this.indicatorName[m];
+			temporal.action="get";
 			var tipo=this.indicatorType[m];
 			if (tipo=="int")//creo los mensajes para obtener cada tipo
 				{
-				argumentos[n+m].value=0;//el tipo es distinto en cada caso
+				temporal.value=0;//el tipo es distinto en cada caso
 				}
 			else if (tipo=="boolean")
 				{
-				argumentos[n+m].value=false;//el tipo es distinto en cada caso
+				temporal.value=false;//el tipo es distinto en cada caso
 				}
 			else if (tipo=="double")
 				{
-				argumentos[n+m].value=0.1;//aquí sin embargo no puedo mandar 0.0 que enviaría el int 0 (el tipo no es compatible y JiL no lo acepta)
+				temporal.value=0.1;//aquí sin embargo no puedo mandar 0.0 que enviaría el int 0 (el tipo no es compatible y JiL no lo acepta)
 				}
 			else if (tipo=="string")
 				{
-				argumentos[n+m].value="a";//el tipo es distinto en cada caso
+				temporal.value="a";//el tipo es distinto en cada caso
 				}
 			m=m+1;
+			argumentos.push(temporal);
+			//alert(argumentos)
 			}// fin del while
 			
 		//3)Finalmente hago la petición	
@@ -263,7 +277,7 @@ try{
 		request.addParam(argumentos);//añado el vector de parámetros que he creado antes
 		var res = request.send(); //pide la respuesta 
 		response=res.parseXML();//parsea el XML
-			if(res.faultValue)///compruebo si hay error (lo muestro) y si no continuo
+			if(res.faultValue)//compruebo si hay error (lo muestro) y si no continuo
 				{
 				this.messageAdd("Error: " + response.faultCode +"-->"+ response.faultString);
 				this.status="SYNC FAIL2";
@@ -271,11 +285,15 @@ try{
 				}
 			else
 				{
-				for (n=0;n<response.length;n++)//pongo los resultados en la página
+				for (n=0;n<response.length;n++)//actualizo las variables
 					{
-					//actualiza las variables
-					this.indicatorValue[n]=response[n].value;
-					}		
+					this.indicatorValue[n]=response[n].value;//actualiza las variables
+					}
+				//doy los controles por sincronizados
+				for (j=0; j<this.controlType.length; j++)//bucle para elimiar los cambios
+					{
+					this.controlModified[n]=false;//ya las he cambiado
+					}
 				this.status="OK";
 				}
 		}
@@ -351,6 +369,7 @@ try{
 	this.controlName=[];
 	this.controlType=[];
 	this.controlValue=[];
+	this.controlModified=[];
 	this.indicatorName=[];
 	this.indicatorType=[];
 	this.indicatorValue=[];
@@ -396,7 +415,13 @@ if (this.host=="")//no estamos conectados, no se deja hacer nada más
 	{this.messageAdd("Please Connect First");
 	this.status="NOT CONNECTED";
 	return this.status;}
-var n=this.indicatorName.indexOf(nombre);//busca el indicador y si existe devuelve su valor
+	for(i=0;i<this.indicatorName.length;i++)//indexoff falla así que lo busco a mano
+		{
+		if (this.indicatorName[i]==nombre)
+			{n=i;
+			break;}
+		}
+	//var n=this.indicatorName.indexOf(nombre);//busca el indicador y si existe devuelve su valor
 if (n==null)
 	{
 	this.messageAdd("Indicator "+nombre+" do not exist");
@@ -417,15 +442,24 @@ if (this.host=="")//no estamos conectados, no se deja hacer nada más
 	{this.messageAdd("Please Connect First");
 	this.status="NOT CONNECTED";
 	return this.status;}
-var n=this.controlName.indexOf(nombre);//busca el control y si existe establece el valor
-if (n==null)
+	var n=-1;
+	for(i=0;i<this.controlName.length;i++)//indexoff falla así que lo busco a mano
+		{
+		if (this.controlName[i]==nombre)
+			{n=i;
+			break;}
+		}
+	//this.controlName.indexOf(nombre);//busca el control y si existe establece el valor
+if (n==-1)
 	{
 	this.messageAdd("Control "+nombre+" do not exist");
-	this.status="FAIL TO SET VARIABLE"
+	this.status="FAIL TO SET VARIABLE";
+
 	}
 else
 	{
 	this.controlValue[n]=valor;
+	this.controlModified[n]=true;//valor nuevo
 	this.status="OK";
 	}
 	return this.status;
